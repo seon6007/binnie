@@ -31,26 +31,22 @@
       /* body는 배경 + 폰트만 담당 */
       body {
         margin: 0;
-        min-height: 100vh;           /* 화면 전체 높이 */
-        display: flex;
-        justify-content: center;     /* 가로 가운데 */
-        align-items: center;         /* 세로 가운데 */
-        padding: 0;                  /* 바깥 여백 제거 */
+        min-height: 100vh;  /* 화면 전체 높이만큼 배경 */
         background: var(--bg-green);
         font-family: "Pretendard Variable", Pretendard, -apple-system,
           BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
           "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
           "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        overflow: hidden;            /* 페이지 스크롤 제거 */
+        overflow-x: hidden;  /* 가로 스크롤 방지 */
       }
 
       .app {
         width: 380px;
         max-width: 100%;
-        padding: 0 16px;             /* 좌우 여백만 유지 */
-        transform: translateY(-40px); /* ✅ 카드 전체를 위로 20px 올려서
-                                         눈으로 봤을 때 화면 정중앙에 오도록 */
+        padding: 0 16px;          /* 좌우 여백만 유지 */
+        margin: 36px auto 28px;   /* ✅ 위 36px, 아래 28px 정도로 카드 전체 위치 조절 */
       }
+
 
 
 
@@ -428,6 +424,7 @@
     </script>
   </body>
 </html>
+
 
 
 
