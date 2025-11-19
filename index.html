@@ -31,33 +31,27 @@
       /* body는 배경 + 폰트만 담당 */
       body {
         margin: 0;
+        min-height: 100vh;           /* 화면 전체 높이 */
+        display: flex;
+        justify-content: center;     /* 가로 가운데 */
+        align-items: center;         /* 세로 가운데 */
+        padding: 0;                  /* 바깥 여백 제거 */
         background: var(--bg-green);
         font-family: "Pretendard Variable", Pretendard, -apple-system,
           BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
           "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
           "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        overflow: hidden; /* 전체 페이지 스크롤 방지 */
+        overflow: hidden;            /* 페이지 스크롤 제거 */
       }
 
       .app {
-        width: 100%;
-        max-width: 380px;  /* 카드 폭 */
-        margin: 0 auto;
-
-        /* 화면 높이 - safe-area (아이폰 상단/하단 영역 제외) */
-        min-height: calc(
-          100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
-        );
-
-        /* 🔹위/아래는 살짝, 양 옆은 예전처럼 넉넉하게 */
-        padding: calc(12px + env(safe-area-inset-top))
-          20px
-          calc(12px + env(safe-area-inset-bottom));
-
-        display: flex;
-        align-items: center;     /* 세로 가운데 */
-        justify-content: center; /* 가로 가운데 */
+        width: 380px;
+        max-width: 100%;
+        padding: 0 16px;             /* 좌우 여백만 유지 */
+        transform: translateY(-20px); /* ✅ 카드 전체를 위로 20px 올려서
+                                         눈으로 봤을 때 화면 정중앙에 오도록 */
       }
+
 
 
       .card {
@@ -434,5 +428,6 @@
     </script>
   </body>
 </html>
+
 
 
