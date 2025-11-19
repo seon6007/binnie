@@ -8,6 +8,7 @@
     />
     <title>비니의 말</title>
 
+    <!-- Pretendard Variable 폰트 -->
     <link
       rel="stylesheet"
       as="style"
@@ -28,42 +29,30 @@
         box-sizing: border-box;
       }
 
-      /* body는 배경 + 폰트만 담당 */
       body {
         margin: 0;
-        min-height: 100vh;  /* 화면 전체 높이만큼 배경 */
+        min-height: 100vh;
         background: var(--bg-green);
         font-family: "Pretendard Variable", Pretendard, -apple-system,
           BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
           "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
           "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        overflow-x: hidden;  /* 가로 스크롤 방지 */
+        overflow-x: hidden;
       }
 
       .app {
         width: 380px;
         max-width: 100%;
-        padding: 0 16px;          /* 좌우 여백만 유지 */
-        margin: 36px auto 28px;   /* ✅ 위 36px, 아래 28px 정도로 카드 전체 위치 조절 */
+        padding: 0 16px;
+        margin: 36px auto 28px; /* 화면 위·아래에서 적당히 띄운 위치 */
       }
-
-
-
 
       .card {
         background: #ffffff;
         border-radius: var(--card-radius);
         padding: 18px 18px 18px;
         box-shadow: var(--card-shadow);
-        width: 100%;
-        max-height: calc(100vh - 24px);
-        display: flex;
-        flex-direction: column;
-
-        /* 🔹화면 중앙 기준으로 살짝 위로 끌어올리기 */
-        margin-top: -10px;
       }
-
 
       .content {
         height: 230px;
@@ -307,6 +296,7 @@
     </div>
 
     <script>
+      // Apps Script 웹 앱 URL
       const API_URL =
         "https://script.google.com/macros/s/AKfycbxiMBfkCL43Fn0Zj2-6ezKw0f2duls4JKAuseTya1e0gVq2ecxOESLTqFmoqQv-LyzFgQ/exec";
 
@@ -318,6 +308,16 @@
         document.getElementById("today").textContent = `${yyyy}.${mm}.${dd}`;
       }
 
+      // 오늘 날짜 기준 localStorage key
+      function getTodayKey() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `BEANIE_ADVENTURE_${yyyy}${mm}${dd}`;
+      }
+
+      // JSONP 로드 유틸
       function loadJsonp(url) {
         const script = document.createElement("script");
         script.src = url;
@@ -325,6 +325,7 @@
         document.body.appendChild(script);
       }
 
+      // 초기 데이터 요청
       function requestInitial() {
         const quoteEl = document.getElementById("quoteText");
         quoteEl.textContent = "생각하는 중...";
@@ -333,21 +334,39 @@
         loadJsonp(API_URL + "?action=initial&callback=handleInitial");
       }
 
+      // Apps Script에서 initial 응답
       function handleInitial(data) {
         const quoteEl = document.getElementById("quoteText");
         const subLabelEl = document.getElementById("subLabel");
 
+        // 비니의 말 (A열)
         quoteEl.classList.remove("loading");
         quoteEl.textContent = (data.quote || "").trim();
-        if (subLabelEl) {
-          subLabelEl.textContent = (data.adventure || "").trim();
+
+        // 오늘의 모험 (B열) — 기기+하루 기준 고정
+        const storageKey = getTodayKey();
+        let adventureText = "";
+
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          adventureText = stored;
+        } else {
+          adventureText = (data.adventure || "").trim();
+          if (adventureText) {
+            localStorage.setItem(storageKey, adventureText);
+          }
         }
+
+        if (subLabelEl) {
+          subLabelEl.textContent = adventureText;
+        }
+
         updateToday();
       }
 
+      // 새 문구 요청 (A열만)
       function requestNewQuote() {
         const quoteEl = document.getElementById("quoteText");
-
         quoteEl.textContent = "생각하는 중...";
         quoteEl.classList.add("loading");
 
@@ -361,6 +380,7 @@
         updateToday();
       }
 
+      // 복사 버튼 설정
       function setupCopyButton() {
         const quoteEl = document.getElementById("quoteText");
         const copyBtn = document.getElementById("copyBtn");
@@ -424,9 +444,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-
-
