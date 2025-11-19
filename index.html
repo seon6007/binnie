@@ -2,9 +2,14 @@
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
+    <!-- 이 줄이 핵심! 화면 축소 방지 -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
     <title>비니의 말</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
+    <!-- Pretendard Variable 폰트 -->
     <link
       rel="stylesheet"
       as="style"
@@ -21,7 +26,9 @@
         --primary-green: #4caf50;
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
       body {
         margin: 0;
@@ -120,9 +127,7 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition:
-          transform 0.05s ease-out,
-          box-shadow 0.1s ease-out;
+        transition: transform 0.05s ease-out, box-shadow 0.1s ease-out;
       }
 
       .btn:active {
@@ -141,7 +146,9 @@
         color: #ffffff;
       }
 
-      .btn-primary.copied { font-weight: 700; }
+      .btn-primary.copied {
+        font-weight: 700;
+      }
 
       .btn-primary:disabled,
       .btn-outline:disabled {
@@ -163,7 +170,9 @@
         display: block;
       }
 
-      .icon-check { display: none; }
+      .icon-check {
+        display: none;
+      }
 
       .divider {
         width: 100%;
@@ -237,17 +246,34 @@
 
           <button id="copyBtn" class="btn btn-primary">
             <span class="icon">
-              <svg class="icon-svg icon-clipboard" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="9" y="9" width="11" height="11" rx="2"
-                      fill="none" stroke="currentColor" stroke-width="2"/>
+              <svg
+                class="icon-svg icon-clipboard"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <rect
+                  x="9"
+                  y="9"
+                  width="11"
+                  height="11"
+                  rx="2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
                 <path
                   d="M5 15V5a2 2 0 0 1 2-2h10"
                   fill="none"
-                  stroke="currentColor" stroke-width="2"
+                  stroke="currentColor"
+                  stroke-width="2"
                   stroke-linecap="round"
                 />
               </svg>
-              <svg class="icon-svg icon-check" viewBox="0 0 24 24" aria-hidden="true">
+              <svg
+                class="icon-svg icon-check"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path
                   d="M20 6L9 17l-5-5"
                   fill="none"
@@ -273,7 +299,7 @@
 
     <script>
       const API_URL =
-        "https://script.google.com/macros/s/AKfycbxiMBfkCL43Fn0Zj2-6ezKw0f2duls4JKAuseTya1e0gVq2ecxOESLTqFmoqQv-LyzFgQ/exec"; // 예: https://script.google.com/macros/s/AKfycb.../exec
+        "https://script.google.com/macros/s/AKfycbxiMBfkCL43Fn0Zj2-6ezKw0f2duls4JKAuseTya1e0gVq2ecxOESLTqFmoqQv-LyzFgQ/exec";
 
       function updateToday() {
         const d = new Date();
@@ -283,43 +309,48 @@
         document.getElementById("today").textContent = `${yyyy}.${mm}.${dd}`;
       }
 
-      async function fetchInitial() {
+      function loadJsonp(url) {
+        const script = document.createElement("script");
+        script.src = url;
+        script.async = true;
+        document.body.appendChild(script);
+      }
+
+      function requestInitial() {
+        const quoteEl = document.getElementById("quoteText");
+        quoteEl.textContent = "생각하는 중...";
+        quoteEl.classList.add("loading");
+
+        loadJsonp(API_URL + "?action=initial&callback=handleInitial");
+      }
+
+      function handleInitial(data) {
         const quoteEl = document.getElementById("quoteText");
         const subLabelEl = document.getElementById("subLabel");
 
-        try {
-          quoteEl.textContent = "생각하는 중...";
-          quoteEl.classList.add("loading");
-
-          const res = await fetch(API_URL + "?action=initial");
-          const data = await res.json();
-
-          quoteEl.classList.remove("loading");
-          quoteEl.textContent = (data.quote || "").trim();
+        quoteEl.classList.remove("loading");
+        quoteEl.textContent = (data.quote || "").trim();
+        if (subLabelEl) {
           subLabelEl.textContent = (data.adventure || "").trim();
-        } catch (e) {
-          quoteEl.classList.remove("loading");
-          quoteEl.textContent = "문구를 불러오지 못했어요.";
         }
+        updateToday();
       }
 
-      async function fetchNewQuote() {
+      function requestNewQuote() {
         const quoteEl = document.getElementById("quoteText");
         const previous = quoteEl.textContent;
 
-        try {
-          quoteEl.textContent = "생각하는 중...";
-          quoteEl.classList.add("loading");
+        quoteEl.textContent = "생각하는 중...";
+        quoteEl.classList.add("loading");
 
-          const res = await fetch(API_URL + "?action=newQuote");
-          const data = await res.json();
+        loadJsonp(API_URL + "?action=newQuote&callback=handleNewQuote");
+      }
 
-          quoteEl.classList.remove("loading");
-          quoteEl.textContent = (data.quote || "").trim();
-        } catch (e) {
-          quoteEl.classList.remove("loading");
-          quoteEl.textContent = previous;
-        }
+      function handleNewQuote(data) {
+        const quoteEl = document.getElementById("quoteText");
+        quoteEl.classList.remove("loading");
+        quoteEl.textContent = (data.quote || "").trim();
+        updateToday();
       }
 
       function setupCopyButton() {
@@ -331,16 +362,21 @@
 
         function showCopiedState() {
           if (copyBtn.classList.contains("copied")) return;
+
           copyBtn.classList.add("copied");
-          clipboardIcon.style.display = "none";
-          checkIcon.style.display = "block";
-          copyLabel.textContent = "복사 완료!";
+          if (clipboardIcon && checkIcon && copyLabel) {
+            clipboardIcon.style.display = "none";
+            checkIcon.style.display = "block";
+            copyLabel.textContent = "복사 완료!";
+          }
 
           setTimeout(() => {
             copyBtn.classList.remove("copied");
-            clipboardIcon.style.display = "block";
-            checkIcon.style.display = "none";
-            copyLabel.textContent = "비니의 말 기억하기";
+            if (clipboardIcon && checkIcon && copyLabel) {
+              clipboardIcon.style.display = "block";
+              checkIcon.style.display = "none";
+              copyLabel.textContent = "비니의 말 기억하기";
+            }
           }, 1200);
         }
 
@@ -348,9 +384,7 @@
           const text = quoteEl.textContent || "";
 
           if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text)
-              .then(showCopiedState)
-              .catch(showCopiedState);
+            navigator.clipboard.writeText(text).then(showCopiedState).catch(showCopiedState);
           } else {
             const textarea = document.createElement("textarea");
             textarea.value = text;
@@ -359,7 +393,9 @@
             document.body.appendChild(textarea);
             textarea.focus();
             textarea.select();
-            try { document.execCommand("copy"); } catch (e) {}
+            try {
+              document.execCommand("copy");
+            } catch (e) {}
             document.body.removeChild(textarea);
             showCopiedState();
           }
@@ -368,15 +404,12 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         updateToday();
-        fetchInitial();
         setupCopyButton();
+        requestInitial();
 
-        document
-          .getElementById("refreshBtn")
-          .addEventListener("click", fetchNewQuote);
+        const refreshBtn = document.getElementById("refreshBtn");
+        refreshBtn.addEventListener("click", requestNewQuote);
       });
     </script>
   </body>
 </html>
-
-
