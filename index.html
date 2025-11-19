@@ -32,30 +32,33 @@
 
       body {
         margin: 0;
-        height: 100vh; /* 화면 높이에 꽉 차게 */
+        height: 100vh;              /* 화면 높이 기준 */
         display: flex;
         justify-content: center;
-        align-items: flex-start; /* 더 이상 세로 가운데 정렬 X, 위쪽으로 붙임 */
-        padding: 10px 0; /* 화면 위·아래 여백만 얇게 남기기 */
+        align-items: center;         /* ✅ 카드 세로 가운데 정렬 */
+        padding: 8px 0;              /* 위·아래 여백은 살짝만 */
         background: var(--bg-green);
         font-family: "Pretendard Variable", Pretendard, -apple-system,
           BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
           "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
           "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        overflow: hidden; /* 전체 페이지 스크롤 없애기 */
+        overflow: hidden;            /* 전체 페이지 스크롤 방지 */
       }
 
       .app {
         width: 380px;
         max-width: 100%;
-        padding: 0 16px; /* 좌우만 패딩, 위아래는 body 패딩으로만 처리 */
+        padding: 0 16px;             /* 좌우만 여백, 위·아래는 body가 담당 */
       }
+
 
       .card {
         background: #ffffff;
         border-radius: var(--card-radius);
         padding: 18px 18px 18px; /* 카드 안쪽 상하 여백 살짝 축소 (24 → 18) */
         box-shadow: var(--card-shadow);
+        max-height: calc(100vh - 20px);  /* 혹시 모를 오버플로우 방지용 */
+        overflow: hidden;
       }
 
       .content {
@@ -418,5 +421,6 @@
     </script>
   </body>
 </html>
+
 
 
