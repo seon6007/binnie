@@ -28,7 +28,7 @@
         box-sizing: border-box;
       }
 
-      /* ✅ body는 배경 + 폰트만 담당, 가운데 정렬은 .app이 담당 */
+      /* body는 배경 + 폰트만 담당 */
       body {
         margin: 0;
         background: var(--bg-green);
@@ -39,16 +39,25 @@
         overflow: hidden; /* 전체 페이지 스크롤 방지 */
       }
 
-      /* ✅ 화면 전체를 쓰면서 카드 세로/가로 가운데 정렬 */
+      /* 🔥 실제 보이는 영역(주소창·홈바 제외) 안에서 카드 중앙 정렬 */
       .app {
         width: 100%;
-        max-width: 420px;          /* 카드 최대 폭 */
+        max-width: 420px;
         margin: 0 auto;
-        min-height: 100vh;         /* 화면 높이 전체 */
+
+        /* 화면 높이 - 상단/하단 safe-area */
+        min-height: calc(
+          100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+        );
+
+        /* 위/아래 패딩에 safe-area 더해주기 (아이폰에서 균형 맞추기) */
+        padding: calc(8px + env(safe-area-inset-top))
+          16px
+          calc(8px + env(safe-area-inset-bottom));
+
         display: flex;
-        align-items: center;       /* 세로 가운데 */
-        justify-content: center;   /* 가로 가운데 */
-        padding: 8px 16px;         /* 화면 가장자리 여백 최소 */
+        align-items: center;   /* 세로 가운데 */
+        justify-content: center; /* 가로 가운데 */
       }
 
       .card {
@@ -421,3 +430,4 @@
     </script>
   </body>
 </html>
+
